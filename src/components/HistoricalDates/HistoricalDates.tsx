@@ -1,7 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { gsap } from 'gsap';
 import { Period } from '../../types';
-import EventSlider from '../EventSlider';
+import './HistoricalDates.scss';
+
+const EventSlider = React.lazy(() => import('../EventSlider'));
+
 import './HistoricalDates.scss';
 
 interface Props {
@@ -12,12 +15,12 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
   const [activePeriod, setActivePeriod] = useState(0);
   const circleRef = useRef<HTMLDivElement>(null);
   const yearsRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLDivElement>(null); // Добавляем ref для подписи
+  const labelRef = useRef<HTMLDivElement>(null);
   const pointsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   // Угол между точками
   const angleStep = 360 / data.length;
-  
+
   // Угол для активной позиции (30 градусов)
   const ACTIVE_POSITION_ANGLE = 30;
 
@@ -99,10 +102,10 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
     // Начинаем с верхней точки (-90°) и добавляем смещение для каждой точки
     const angle = (index * angleStep - 90) * (Math.PI / 180);
     const radius = 50; // 50% от центра
-    
+
     const x = 50 + radius * Math.cos(angle);
     const y = 50 + radius * Math.sin(angle);
-    
+
     return { x, y };
   };
 
@@ -122,19 +125,19 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
   return (
     <div className="historical-dates">
       <h2 className="historical-dates__title">Исторические даты</h2>
-      
+
       <div className="historical-dates__container">
         <div className="historical-dates__circle-wrapper">
           <div className="historical-dates__circle-border" />
-        
-          <div 
+
+          <div
             ref={circleRef}
             className="historical-dates__points-container"
           >
             {data.map((period, index) => {
               const { x, y } = getPointPosition(index);
               const isActive = index === activePeriod;
-              
+
               return (
                 <div
                   key={period.id}
@@ -155,14 +158,14 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
               );
             })}
           </div>
-          
-          <div 
+
+          <div
             ref={labelRef}
             className="historical-dates__active-label"
           >
             {data[activePeriod].name}
           </div>
-          
+
           <div className="historical-dates__years" ref={yearsRef}>
             <span className="historical-dates__start-year">
               {data[activePeriod].startYear}
@@ -172,7 +175,7 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
             </span>
           </div>
         </div>
-        
+
         <div className="historical-dates__controls">
           <div className="historical-dates__pagination">
             <span className="historical-dates__current">
@@ -182,31 +185,37 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
               /{String(data.length).padStart(2, '0')}
             </span>
           </div>
-          
+
           <div className="historical-dates__nav">
-            <button 
+            <button
               className="historical-dates__nav-btn historical-dates__nav-btn--prev"
               onClick={handlePrevClick}
               aria-label="Предыдущий период"
             >
               <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
-                <path d="M8.5 1L2 7L8.5 13" stroke="#42567A" strokeWidth="2"/>
+                <path d="M8.5 1L2 7L8.5 13" stroke="#42567A" strokeWidth="2" />
               </svg>
             </button>
-            <button 
+            <button
               className="historical-dates__nav-btn historical-dates__nav-btn--next"
               onClick={handleNextClick}
               aria-label="Следующий период"
             >
               <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
-                <path d="M1.5 1L8 7L1.5 13" stroke="#42567A" strokeWidth="2"/>
+                <path d="M1.5 1L8 7L1.5 13" stroke="#42567A" strokeWidth="2" />
               </svg>
             </button>
           </div>
         </div>
       </div>
-      
-      <EventSlider events={data[activePeriod].events} />
+
+      <Suspense fallback={
+        <div className="historical-dates__slider-loading">
+          <div className="historical-dates__loading-spinner"></div>
+        </div>
+      }>
+        <EventSlider events={data[activePeriod].events} />
+      </Suspense>
     </div>
   );
 };

@@ -16,6 +16,31 @@ export default {
     filename: '[name].[contenthash].js',
     clean: true,
   },
+  // Настройки для оптимизации bundle'а
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+        gsap: {
+          test: /[\\/]node_modules[\\/]gsap[\\/]/,
+          name: 'gsap',
+          chunks: 'all',
+          priority: 10,
+        },
+      },
+    },
+  },
+  // Настройки для контроля размера bundle'а
+  performance: {
+    maxAssetSize: 500000, // 500 КБ
+    maxEntrypointSize: 500000, // 500 КБ
+    hints: isDevelopment ? false : 'warning', // Показывать предупреждения только в production
+  },
   module: {
     rules: [
       {

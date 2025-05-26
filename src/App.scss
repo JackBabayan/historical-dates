@@ -1,0 +1,9 @@
+.app {
+  min-height: 100vh;
+  background-color: $background-color;
+  
+  &__separator {
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, rgba(66, 86, 122, 0.1), transparent);
+  }
+}

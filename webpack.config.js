@@ -6,8 +6,10 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 export default {
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+  mode: isDevelopment ? 'development' : 'production',
   entry: './src/main.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -32,12 +34,19 @@ export default {
         test: /\.(scss|css)$/,
         exclude: /node_modules\/swiper/,
         use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
+          // В режиме разработки используем style-loader для hot reload
+          isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: isDevelopment
+            }
+          },
           {
             loader: 'sass-loader',
             options: {
-              api: 'modern'
+              api: 'modern',
+              sourceMap: isDevelopment
             }
           }
         ],
@@ -46,7 +55,7 @@ export default {
         test: /\.css$/,
         include: /node_modules\/swiper/,
         use: [
-          MiniCssExtractPlugin.loader,
+          isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
           'css-loader'
         ],
       },
@@ -63,9 +72,12 @@ export default {
     new HtmlWebpackPlugin({
       template: './index.html',
     }),
-    new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
-    }),
+    // MiniCssExtractPlugin только для продакшена
+    ...(isDevelopment ? [] : [
+      new MiniCssExtractPlugin({
+        filename: '[name].[contenthash].css',
+      })
+    ]),
   ],
   devServer: {
     static: {
@@ -73,6 +85,25 @@ export default {
     },
     compress: true,
     port: 3000,
-    hot: true,
+    hot: true, // Hot Module Replacement
+    liveReload: false, // Отключаем принудительную перезагрузку
+    watchFiles: {
+      paths: ['src/**/*.scss', 'src/**/*.css'], // Отслеживаем только стили
+      options: {
+        usePolling: false, // Отключаем polling для лучшей производительности
+      },
+    },
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
+    },
   },
-}; 
+  // Настройки для отслеживания изменений
+  watchOptions: {
+    aggregateTimeout: 300,
+    poll: false, // Отключаем polling
+    ignored: /node_modules/,
+  },
+};

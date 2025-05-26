@@ -2,7 +2,6 @@
 
 .event-slider {
     position: relative;
-    padding: 0 80px;
     transition: padding 0.3s ease;
     
     &__swiper {
@@ -54,29 +53,28 @@
       }
       
       &:disabled {
-        opacity: 0.5;
+        opacity: 0;
         cursor: not-allowed;
       }
       
       &--prev {
-        left: 20px;
+        left: calc($wrapperPaddingLeftRight / -1.4);
         transition: left 0.3s ease;
       }
       
       &--next {
-        right: 20px;
+        right: calc($wrapperPaddingLeftRight / -2);
         transition: right 0.3s ease;
       }
     }
     
     .swiper-button-disabled {
-      opacity: 0.5;
+      opacity: 0;
     }
   }
   
   @media (max-width: $desktop) {
     .event-slider {
-      padding: 0 60px;
       
       &__year {
         font-size: 20px;

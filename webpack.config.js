@@ -34,6 +34,8 @@ export default {
         },
       },
     },
+    // Минификация только для production
+    minimize: !isDevelopment,
   },
   // Настройки для контроля размера bundle'а
   performance: {

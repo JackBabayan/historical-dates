@@ -17,7 +17,6 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
   const currentRotation = useRef(0);
 
   const angleStep = 360 / data.length;
-  const radius = 265;
   const activePositionAngle = 45; // 45 градусов - правый верхний угол
 
   useEffect(() => {

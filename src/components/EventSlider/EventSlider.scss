@@ -40,7 +40,7 @@
       height: 40px;
       border-radius: 50%;
       background: $white;
-      box-shadow: 0 0 15px 0 rgba(56, 119, 238, 0.1);
+      box-shadow: 0 0 15px 0 rgba($primary-color, 0.1);
       border: none;
       cursor: pointer;
       display: flex;
@@ -51,10 +51,12 @@
 
       svg{
         stroke:$accent-color;
+        width: 7px;
+        height: 12px;
       }
       
       &:hover {
-        box-shadow: 0 0 20px 0 rgba(56, 119, 238, 0.2);
+        box-shadow: 0 0 20px 0 rgba($primary-color, 0.2);
       }
       
       &:disabled {

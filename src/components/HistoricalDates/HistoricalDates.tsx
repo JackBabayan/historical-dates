@@ -109,7 +109,7 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
 
   const getPointPosition = (index: number) => {
     const angle = (index * angleStep - 90) * (Math.PI / 180);
-    const radius = 50; 
+    const radius = 50;
 
     const x = 50 + radius * Math.cos(angle);
     const y = 50 + radius * Math.sin(angle);
@@ -134,44 +134,51 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
       <h2 className="historical-dates__title">Исторические даты</h2>
 
       <div className="historical-dates__container">
+
         <div className="historical-dates__circle-wrapper">
-          <div className="historical-dates__circle-border" />
+          {
+            window.innerWidth >= 768 &&
+            <>
 
-          <div
-            ref={circleRef}
-            className="historical-dates__points-container"
-          >
-            {data.map((period, index) => {
-              const { x, y } = getPointPosition(index);
-              const isActive = index === activePeriod;
+              <div className="historical-dates__circle-border" />
 
-              return (
-                <div
-                  key={period.id}
-                  ref={el => pointsRef.current[index] = el}
-                  className={`historical-dates__point ${isActive ? 'active' : ''}`}
-                  style={{
-                    left: `${x}%`,
-                    top: `${y}%`,
-                  }}
-                  onClick={() => handlePointClick(index)}
-                >
-                  <div className="historical-dates__point-inner">
-                    <span className="historical-dates__point-number">
-                      {index + 1}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+              <div
+                ref={circleRef}
+                className="historical-dates__points-container"
+              >
+                {data.map((period, index) => {
+                  const { x, y } = getPointPosition(index);
+                  const isActive = index === activePeriod;
 
-          <div
-            ref={labelRef}
-            className="historical-dates__active-label"
-          >
-            {data[activePeriod].name}
-          </div>
+                  return (
+                    <div
+                      key={period.id}
+                      ref={el => pointsRef.current[index] = el}
+                      className={`historical-dates__point ${isActive ? 'active' : ''}`}
+                      style={{
+                        left: `${x}%`,
+                        top: `${y}%`,
+                      }}
+                      onClick={() => handlePointClick(index)}
+                    >
+                      <div className="historical-dates__point-inner">
+                        <span className="historical-dates__point-number">
+                          {index + 1}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div
+                ref={labelRef}
+                className="historical-dates__active-label"
+              >
+                {data[activePeriod].name}
+              </div>
+            </>
+          }
 
           <div className="historical-dates__years" ref={yearsRef}>
             <span className="historical-dates__start-year">
@@ -182,7 +189,49 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
             </span>
           </div>
         </div>
+        {
+          window.innerWidth >= 768 &&
+          <div className="historical-dates__controls">
+            <div className="historical-dates__pagination">
+              <span className="historical-dates__current">
+                {String(activePeriod + 1).padStart(2, '0')}
+              </span>
+              <span className="historical-dates__total">
+                /{String(data.length).padStart(2, '0')}
+              </span>
+            </div>
 
+            <div className="historical-dates__nav">
+              <button
+                className={`historical-dates__nav-btn historical-dates__nav-btn--prev${activePeriod == 0 && " historical-dates__nav-btn--disable"}`}
+                onClick={handlePrevClick}
+                aria-label="Предыдущий период"
+              >
+                <ArrowLeftIcon />
+              </button>
+              <button
+                className={`historical-dates__nav-btn historical-dates__nav-btn--next ${activePeriod == data.length-1 && " historical-dates__nav-btn--disable"}`}
+                onClick={handleNextClick}
+                aria-label="Следующий период"
+              >
+                <ArrowRightIcon />
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <Suspense fallback={
+        <div className="historical-dates__slider-loading">
+          <div className="historical-dates__loading-spinner"></div>
+        </div>
+      }>
+        <EventSlider events={data[activePeriod].events} />
+      </Suspense>
+
+
+      {
+        window.innerWidth < 768 &&
         <div className="historical-dates__controls">
           <div className="historical-dates__pagination">
             <span className="historical-dates__current">
@@ -210,15 +259,7 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
             </button>
           </div>
         </div>
-      </div>
-
-      <Suspense fallback={
-        <div className="historical-dates__slider-loading">
-          <div className="historical-dates__loading-spinner"></div>
-        </div>
-      }>
-        <EventSlider events={data[activePeriod].events} />
-      </Suspense>
+      }
     </div>
   );
 };

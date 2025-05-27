@@ -1,7 +1,5 @@
 @use "../../styles/variables" as *;
 
-$sectionPaddingBottom:94px;
-
 .historical-dates {
     position: relative;
     max-width: $wide;
@@ -34,7 +32,7 @@ $sectionPaddingBottom:94px;
 
     &__container {
         position: relative;
-        margin-bottom: $sectionPaddingBottom;
+        margin-bottom: 94px;
         margin-top: 45px;
 
         &::after {
@@ -198,9 +196,10 @@ $sectionPaddingBottom:94px;
         font-weight: 400;
         line-height: 1;
     }
+
     &__nav {
         display: flex;
-        gap: 20px;
+        gap: $gapMd;
     }
 
     &__nav-btn {
@@ -215,7 +214,7 @@ $sectionPaddingBottom:94px;
         justify-content: center;
         transition: all 0.3s ease;
 
-        svg{
+        svg {
             stroke: $primary-color;
         }
 
@@ -223,9 +222,9 @@ $sectionPaddingBottom:94px;
             background: $white;
         }
 
-        &:disabled {
+        &--disable{
             opacity: 0.5;
-            cursor: not-allowed;
+            pointer-events: none;
         }
     }
 
@@ -260,8 +259,13 @@ $sectionPaddingBottom:94px;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes fadeIn {
@@ -270,39 +274,65 @@ $sectionPaddingBottom:94px;
     }
 }
 
-@media (max-width: $desktop) {
+@media (max-width: $tablet) {
     .historical-dates {
-        padding: 40px 20px;
 
+        
+        
+        &::before {
+            content: none;
+        }
+        
+        border-right: 0;
+        border-left: 0;
+        
         &__title {
-            font-size: 36px;
-            margin-bottom: 60px;
+            position: static;
+            max-width: 125px;
+            
+            &::after {
+                content: none;
+            }
+        }
+        
+        &__container {
+            position: relative;
+            margin-top: $wrapperPaddingTop;
+            margin-bottom: 57px;
+            &::after {
+                content: none;
+            }
         }
 
         &__circle-wrapper {
-            width: 350px;
-            height: 350px;
-        }
+            position: relative;
+            width: 100%;
+            height: auto;
+            margin: 0 auto;
+            z-index: 11;
 
-        &__active-label {
-            // Адаптивное позиционирование для мобильных
-            top: calc(50% - 35% * 0.707);
-            left: calc(50% + 35% * 0.707 + 20px);
-            font-size: 18px;
         }
-
-        &__years {
-            gap: 40px;
-        }
-
-        &__start-year,
-        &__end-year {
-            font-size: 120px;
+        &__years{
+            position: static;
+            transform:none;
+            gap: 20px;
+            justify-content: space-between;
         }
 
         &__controls {
-            left: 20px;
-            right: 20px;
+            position: static;
+        }
+
+        &__nav-btn {
+            width: 25px;
+            height: 25px;
+            svg {
+                width: 5px;
+                height: 9px;
+                path{
+                    stroke-width: 30%;
+                }
+            }
         }
     }
 }

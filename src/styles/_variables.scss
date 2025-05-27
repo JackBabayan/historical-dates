@@ -8,7 +8,7 @@ $white: #FFFFFF;
 
 // Брейкпойнты
 $mobile: 480px;
-$tablet: 768px;
+$tablet: 767px;
 $desktop: 1024px;
 $wide: 1440px;
 
@@ -16,26 +16,55 @@ $wide: 1440px;
 $font-primary: 'PT Sans', Arial, sans-serif;
 $font-bebas: 'Bebas Neue', sans-serif;
 
-
-//фонт 
-$h1: 200px;
-$h2: 56px;
-$h3: 25px;
-$h4: 20px;
-
-$pL: 20px;
-$pM: 14px;
-$pS: 12px;
-
-//line heights
+// Line heights
 $lineHeight: 1.2;
 $lineHeightM: 1.4;
 $lineHeightL: 1.6;
 $lineHeightXL: 1.8;
 
-//падинг глобал
-$wrapperPaddingLeftRight: 80px;
-$wrapperPaddingTop: 170px;
-$wrapperPaddingBottom: 104px;
-$wrapperPaddingInside: 56px;
-$gapMd: 20px;
+// CSS Custom Properties с адаптивными значениями
+:root {
+  // Десктопные размеры шрифтов
+  --font-h1: 200px;
+  --font-h2: 56px;
+  --font-h3: 25px;
+  --font-h4: 20px;
+  --font-pL: 20px;
+  --font-pM: 14px;
+  
+  // Десктопные отступы
+  --wrapper-padding-lr: 80px;
+  --wrapper-padding-top: 170px;
+  --wrapper-padding-bottom: 104px;
+  --wrapper-padding-inside: 56px;
+  --gap-md: 20px;
+
+  // Мобильные размеры (переопределяются в медиа-запросе)
+  @media (max-width: #{$tablet}) {
+    --font-h1: 56px;
+    --font-h2: 20px;
+    --font-h3: 16px;
+    --font-h4: 16px;
+    --font-pL: 14px;
+    --font-pM: 14px;
+    
+    --wrapper-padding-lr: 20px;
+    --wrapper-padding-top: 59px;
+    --wrapper-padding-bottom: 78px;
+    --wrapper-padding-inside: 56px;
+    --gap-md: 10px;
+  }
+}
+
+// Обратная совместимость - SCSS переменные для цветов и констант
+$h1: var(--font-h1);
+$h2: var(--font-h2);
+$h3: var(--font-h3);
+$h4: var(--font-h4);
+$pL: var(--font-pL);
+$pM: var(--font-pM);
+$wrapperPaddingLeftRight: var(--wrapper-padding-lr);
+$wrapperPaddingTop: var(--wrapper-padding-top);
+$wrapperPaddingBottom: var(--wrapper-padding-bottom);
+$wrapperPaddingInside: var(--wrapper-padding-inside);
+$gapMd: var(--gap-md);

@@ -1,8 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
-import { Event } from '../../types';
+import { gsap } from 'gsap';
+import { Event } from '@/types';
+import { ArrowLeftIcon, ArrowRightIcon } from "@/styles/icons/icon"
+
 import 'swiper/css';
 import 'swiper/css/navigation';
 import './EventSlider.scss';
@@ -16,6 +19,51 @@ const EventSlider: React.FC<Props> = ({ events }) => {
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
 
+  const [currentEvents, setCurrentEvents] = useState<Event[]>(events);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    setCurrentEvents(events);
+  }, []);
+
+  useEffect(() => {
+    if (!swiperRef.current?.wrapperEl || isAnimating) return;
+
+    const eventsChanged = JSON.stringify(events) !== JSON.stringify(currentEvents);
+
+    if (eventsChanged && currentEvents.length > 0) {
+      setIsAnimating(true);
+
+      gsap.to(swiperRef.current.wrapperEl, {
+        opacity: 0,
+        y: 2,
+        duration: 0.3,
+        ease: "power2.out",
+        onComplete: () => {
+          setCurrentEvents(events);
+
+          setTimeout(() => {
+            if (swiperRef.current) {
+              swiperRef.current.slideTo(0, 0);
+            }
+
+            if (swiperRef.current?.wrapperEl) {
+              gsap.to(swiperRef.current.wrapperEl, {
+                opacity: 1,
+                y: 0,
+                duration: 0.4,
+                ease: "power2.out",
+                onComplete: () => {
+                  setIsAnimating(false);
+                }
+              });
+            }
+          }, 50);
+        }
+      });
+    }
+  }, [events, currentEvents, isAnimating]);
+
   useEffect(() => {
     if (swiperRef.current && swiperRef.current.params && swiperRef.current.params.navigation) {
       const navigation = swiperRef.current.params.navigation;
@@ -23,23 +71,25 @@ const EventSlider: React.FC<Props> = ({ events }) => {
         navigation.prevEl = prevRef.current;
         navigation.nextEl = nextRef.current;
       }
-      
+
       if (swiperRef.current.navigation) {
         swiperRef.current.navigation.destroy();
         swiperRef.current.navigation.init();
         swiperRef.current.navigation.update();
       }
     }
-  }, [events]);
+  }, [currentEvents]);
 
   return (
     <div className="event-slider">
-      <button ref={prevRef} className="event-slider__nav event-slider__nav--prev">
-        <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
-          <path d="M8.5 1L2 7L8.5 13" stroke="#3877EE" strokeWidth="2"/>
-        </svg>
+      <button
+        ref={prevRef}
+        className="event-slider__nav event-slider__nav--prev"
+        disabled={isAnimating}
+      >
+        <ArrowLeftIcon />
       </button>
-      
+
       <Swiper
         onSwiper={(swiper) => { swiperRef.current = swiper; }}
         modules={[Navigation]}
@@ -52,31 +102,33 @@ const EventSlider: React.FC<Props> = ({ events }) => {
         breakpoints={{
           320: {
             slidesPerView: 1,
-            spaceBetween: 20
+            spaceBetween: 25
           },
           768: {
             slidesPerView: 2,
-            spaceBetween: 20
+            spaceBetween: 60
           },
           1024: {
             slidesPerView: 3,
-            spaceBetween: 25
+            spaceBetween: 80
           }
         }}
         className="event-slider__swiper"
       >
-        {events.map((event, index) => (
+        {currentEvents.map((event, index) => (
           <SwiperSlide key={index} className="event-slider__slide">
             <div className="event-slider__year">{event.year}</div>
             <div className="event-slider__description">{event.description}</div>
           </SwiperSlide>
         ))}
       </Swiper>
-      
-      <button ref={nextRef} className="event-slider__nav event-slider__nav--next">
-        <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
-          <path d="M1.5 1L8 7L1.5 13" stroke="#3877EE" strokeWidth="2"/>
-        </svg>
+
+      <button
+        ref={nextRef}
+        className="event-slider__nav event-slider__nav--next"
+        disabled={isAnimating}
+      >
+        <ArrowRightIcon />
       </button>
     </div>
   );

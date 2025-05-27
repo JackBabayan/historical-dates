@@ -16,7 +16,6 @@ export default {
     filename: '[name].[contenthash].js',
     clean: true,
   },
-  // Настройки для оптимизации bundle'а
   optimization: {
     splitChunks: {
       chunks: 'all',
@@ -34,14 +33,12 @@ export default {
         },
       },
     },
-    // Минификация только для production
     minimize: !isDevelopment,
   },
-  // Настройки для контроля размера bundle'а
   performance: {
     maxAssetSize: 500000, // 500 КБ
     maxEntrypointSize: 500000, // 500 КБ
-    hints: isDevelopment ? false : 'warning', // Показывать предупреждения только в production
+    hints: isDevelopment ? false : 'warning',
   },
   module: {
     rules: [
@@ -61,7 +58,6 @@ export default {
         test: /\.(scss|css)$/,
         exclude: /node_modules\/swiper/,
         use: [
-          // В режиме разработки используем style-loader для hot reload
           isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
@@ -94,12 +90,18 @@ export default {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@/components': path.resolve(__dirname, 'src/components'),
+      '@/types': path.resolve(__dirname, 'src/types'),
+      '@/styles': path.resolve(__dirname, 'src/styles'),
+      '@/utils': path.resolve(__dirname, 'src/utils')
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './index.html',
     }),
-    // MiniCssExtractPlugin только для продакшена
     ...(isDevelopment ? [] : [
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash].css',
@@ -112,12 +114,12 @@ export default {
     },
     compress: true,
     port: 3000,
-    hot: true, // Hot Module Replacement
-    liveReload: false, // Отключаем принудительную перезагрузку
+    hot: true, 
+    liveReload: false,
     watchFiles: {
-      paths: ['src/**/*.scss', 'src/**/*.css'], // Отслеживаем только стили
+      paths: ['src/**/*.scss', 'src/**/*.css'],
       options: {
-        usePolling: false, // Отключаем polling для лучшей производительности
+        usePolling: false, 
       },
     },
     client: {
@@ -127,10 +129,9 @@ export default {
       },
     },
   },
-  // Настройки для отслеживания изменений
   watchOptions: {
     aggregateTimeout: 300,
-    poll: false, // Отключаем polling
+    poll: false,
     ignored: /node_modules/,
   },
 };

@@ -1,5 +1,5 @@
-import HistoricalDates from './components/HistoricalDates';
-import { historicalData } from './data/historicalData';
+import HistoricalDates from '@/components/HistoricalDates';
+import { historicalData } from '@/data/historicalData';
 import './App.scss';
 
 function App() {

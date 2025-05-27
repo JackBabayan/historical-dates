@@ -6,6 +6,7 @@
     
     &__swiper {
       overflow: hidden;
+      margin-right: $wrapperPaddingLeftRight;
     }
     
     &__slide {
@@ -14,7 +15,7 @@
     }
     
     &__year {
-      font-size: 25px;
+      font-size: $h3;
       font-weight: 400;
       line-height: 1.2;
       color: $accent-color;
@@ -24,7 +25,7 @@
     }
     
     &__description {
-      font-size: 20px;
+      font-size: $pL;
       font-weight: 400;
       line-height: 1.5;
       color: $primary-color;
@@ -47,6 +48,10 @@
       justify-content: center;
       z-index: 10;
       transition: all 0.3s ease;
+
+      svg{
+        stroke:$accent-color;
+      }
       
       &:hover {
         box-shadow: 0 0 20px 0 rgba(56, 119, 238, 0.2);

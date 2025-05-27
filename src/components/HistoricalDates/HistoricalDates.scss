@@ -215,6 +215,10 @@ $sectionPaddingBottom:94px;
         justify-content: center;
         transition: all 0.3s ease;
 
+        svg{
+            stroke: $primary-color;
+        }
+
         &:hover {
             background: $white;
         }

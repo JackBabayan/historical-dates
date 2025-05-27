@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { gsap } from 'gsap';
-import { Period } from '../../types';
-import './HistoricalDates.scss';
-
-const EventSlider = React.lazy(() => import('../EventSlider'));
+import { Period } from '@/types';
+import { ArrowLeftIcon, ArrowRightIcon } from "@/styles/icons/icon"
 
 import './HistoricalDates.scss';
+
+const EventSlider = React.lazy(() => import('@/components/EventSlider'));
 
 interface Props {
   data: Period[];
@@ -18,40 +18,52 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
   const labelRef = useRef<HTMLDivElement>(null);
   const pointsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Угол между точками
+  const [currentStartYear, setCurrentStartYear] = useState(data[0].startYear);
+  const [currentEndYear, setCurrentEndYear] = useState(data[0].endYear);
+
   const angleStep = 360 / data.length;
 
-  // Угол для активной позиции (30 градусов)
   const ACTIVE_POSITION_ANGLE = 30;
 
-  // Анимация при смене активного периода
   useEffect(() => {
     animateYears();
     rotateCircleToActivePosition();
   }, [activePeriod]);
 
-  // Анимация смены годов
   const animateYears = () => {
     if (!yearsRef.current) return;
 
-    const startYear = yearsRef.current.querySelector('.historical-dates__start-year');
-    const endYear = yearsRef.current.querySelector('.historical-dates__end-year');
+    const startYearEl = yearsRef.current.querySelector('.historical-dates__start-year');
+    const endYearEl = yearsRef.current.querySelector('.historical-dates__end-year');
 
-    gsap.timeline()
-      .to([startYear, endYear], {
-        opacity: 0,
-        y: -20,
-        duration: 0.3,
-        onComplete: () => {
-          if (startYear) startYear.textContent = String(data[activePeriod].startYear);
-          if (endYear) endYear.textContent = String(data[activePeriod].endYear);
+    const targetStartYear = data[activePeriod].startYear;
+    const targetEndYear = data[activePeriod].endYear;
+
+    if (startYearEl) {
+      gsap.to({ value: currentStartYear }, {
+        value: targetStartYear,
+        duration: 0.6,
+        ease: "power2.out",
+        onUpdate: function () {
+          const animatedValue = Math.round(this.targets()[0].value);
+          setCurrentStartYear(animatedValue);
+          startYearEl.textContent = String(animatedValue);
         }
-      })
-      .to([startYear, endYear], {
-        opacity: 1,
-        y: 0,
-        duration: 0.3
       });
+    }
+
+    if (endYearEl) {
+      gsap.to({ value: currentEndYear }, {
+        value: targetEndYear,
+        duration: 0.6,
+        ease: "power2.out",
+        onUpdate: function () {
+          const animatedValue = Math.round(this.targets()[0].value);
+          setCurrentEndYear(animatedValue);
+          endYearEl.textContent = String(animatedValue);
+        }
+      });
+    }
   };
 
   const rotateCircleToActivePosition = () => {
@@ -59,14 +71,12 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
 
     const targetRotation = ACTIVE_POSITION_ANGLE - (activePeriod * angleStep);
 
-    // Сначала скрываем подпись
     if (labelRef.current) {
       gsap.to(labelRef.current, {
         opacity: 0,
-        duration: 0
+        duration: 0.2
       });
     }
-
 
     gsap.to(circleRef.current, {
       rotation: targetRotation,
@@ -97,11 +107,9 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
     });
   };
 
-  // Вычисление позиции точки на окружности
   const getPointPosition = (index: number) => {
-    // Начинаем с верхней точки (-90°) и добавляем смещение для каждой точки
     const angle = (index * angleStep - 90) * (Math.PI / 180);
-    const radius = 50; // 50% от центра
+    const radius = 50; 
 
     const x = 50 + radius * Math.cos(angle);
     const y = 50 + radius * Math.sin(angle);
@@ -109,7 +117,6 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
     return { x, y };
   };
 
-  // Обработчики событий
   const handlePointClick = (index: number) => {
     setActivePeriod(index);
   };
@@ -168,10 +175,10 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
 
           <div className="historical-dates__years" ref={yearsRef}>
             <span className="historical-dates__start-year">
-              {data[activePeriod].startYear}
+              {currentStartYear}
             </span>
             <span className="historical-dates__end-year">
-              {data[activePeriod].endYear}
+              {currentEndYear}
             </span>
           </div>
         </div>
@@ -192,18 +199,14 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
               onClick={handlePrevClick}
               aria-label="Предыдущий период"
             >
-              <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
-                <path d="M8.5 1L2 7L8.5 13" stroke="#42567A" strokeWidth="2" />
-              </svg>
+              <ArrowLeftIcon />
             </button>
             <button
               className="historical-dates__nav-btn historical-dates__nav-btn--next"
               onClick={handleNextClick}
               aria-label="Следующий период"
             >
-              <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
-                <path d="M1.5 1L8 7L1.5 13" stroke="#42567A" strokeWidth="2" />
-              </svg>
+              <ArrowRightIcon />
             </button>
           </div>
         </div>

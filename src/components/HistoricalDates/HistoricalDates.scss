@@ -120,6 +120,22 @@
             transition: opacity 0.3s ease;
         }
 
+        &-label {
+            position: absolute;
+            top: 50%;
+            left: calc(100% + 20px);
+            transform: translateY(-50%);
+            font-size: $h4;
+            font-weight: 700;
+            color: $primary-color;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 3;
+            text-align: center;
+        }
+
         &:hover,
         &.active {
             .historical-dates__point-inner {
@@ -139,19 +155,13 @@
                 opacity: 1;
             }
         }
-    }
 
-    &__active-label {
-        position: absolute;
-        top: 4.5%;
-        left: 80%;
-        transform: translateX(20px);
-        font-size: $h4;
-        font-weight: 700;
-        color: $primary-color;
-        white-space: nowrap;
-        pointer-events: none;
-        z-index: 2;
+        &.active {
+            .historical-dates__point-label {
+                opacity: 1;
+                font-weight: 700;
+            }
+        }
     }
 
     &__years {
@@ -224,7 +234,7 @@
             background: $white;
         }
 
-        &--disable{
+        &--disable {
             opacity: 0.5;
             pointer-events: none;
         }
@@ -279,28 +289,29 @@
 @media (max-width: $tablet) {
     .historical-dates {
 
-        
-        
+
+
         &::before {
             content: none;
         }
-        
+
         border-right: 0;
         border-left: 0;
-        
+
         &__title {
             position: static;
             max-width: 125px;
-            
+
             &::after {
                 content: none;
             }
         }
-        
+
         &__container {
             position: relative;
             margin-top: $wrapperPaddingTop;
             margin-bottom: 57px;
+
             &::after {
                 content: none;
             }
@@ -314,9 +325,10 @@
             z-index: 11;
 
         }
-        &__years{
+
+        &__years {
             position: static;
-            transform:none;
+            transform: none;
             gap: 20px;
             justify-content: space-between;
         }
@@ -328,10 +340,12 @@
         &__nav-btn {
             width: 25px;
             height: 25px;
+
             svg {
                 width: 5px;
                 height: 9px;
-                path{
+
+                path {
                     stroke-width: 30%;
                 }
             }

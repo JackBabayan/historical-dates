@@ -15,14 +15,12 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
   const [activePeriod, setActivePeriod] = useState(0);
   const circleRef = useRef<HTMLDivElement>(null);
   const yearsRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLDivElement>(null);
   const pointsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const [currentStartYear, setCurrentStartYear] = useState(data[0].startYear);
   const [currentEndYear, setCurrentEndYear] = useState(data[0].endYear);
 
   const angleStep = 360 / data.length;
-
   const ACTIVE_POSITION_ANGLE = 30;
 
   useEffect(() => {
@@ -71,38 +69,20 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
 
     const targetRotation = ACTIVE_POSITION_ANGLE - (activePeriod * angleStep);
 
-    if (labelRef.current) {
-      gsap.to(labelRef.current, {
-        opacity: 0,
-        duration: 0.2
-      });
-    }
-
     gsap.to(circleRef.current, {
       rotation: targetRotation,
       duration: 0.8,
       ease: "power2.inOut",
-      onComplete: () => {
-        if (labelRef.current) {
-          labelRef.current.textContent = data[activePeriod].name;
-          gsap.to(labelRef.current, {
-            opacity: 1,
-            duration: 0.3
-          });
-        }
-      }
     });
 
+    // Поворачиваем каждую точку, чтобы номера и лейблы оставались горизонтальными
     pointsRef.current.forEach((pointEl) => {
       if (pointEl) {
-        const numberEl = pointEl.querySelector('.historical-dates__point-number');
-        if (numberEl) {
-          gsap.to(numberEl, {
-            rotation: -targetRotation,
-            duration: 0.8,
-            ease: "power2.inOut"
-          });
-        }
+        gsap.to(pointEl, {
+          rotation: -targetRotation,
+          duration: 0.8,
+          ease: "power2.inOut"
+        });
       }
     });
   };
@@ -134,12 +114,9 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
       <h2 className="historical-dates__title">Исторические даты</h2>
 
       <div className="historical-dates__container">
-
         <div className="historical-dates__circle-wrapper">
-          {
-            window.innerWidth >= 768 &&
+          {window.innerWidth >= 768 && (
             <>
-
               <div className="historical-dates__circle-border" />
 
               <div
@@ -166,19 +143,15 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
                           {index + 1}
                         </span>
                       </div>
+                      <div className="historical-dates__point-label">
+                        {period.name}
+                      </div>
                     </div>
                   );
                 })}
               </div>
-
-              <div
-                ref={labelRef}
-                className="historical-dates__active-label"
-              >
-                {data[activePeriod].name}
-              </div>
             </>
-          }
+          )}
 
           <div className="historical-dates__years" ref={yearsRef}>
             <span className="historical-dates__start-year">
@@ -189,8 +162,8 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
             </span>
           </div>
         </div>
-        {
-          window.innerWidth >= 768 &&
+
+        {window.innerWidth >= 768 && (
           <div className="historical-dates__controls">
             <div className="historical-dates__pagination">
               <span className="historical-dates__current">
@@ -203,14 +176,14 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
 
             <div className="historical-dates__nav">
               <button
-                className={`historical-dates__nav-btn historical-dates__nav-btn--prev${activePeriod == 0 && " historical-dates__nav-btn--disable"}`}
+                className={`historical-dates__nav-btn historical-dates__nav-btn--prev${activePeriod === 0 ? ' historical-dates__nav-btn--disable' : ''}`}
                 onClick={handlePrevClick}
                 aria-label="Предыдущий период"
               >
                 <ArrowLeftIcon />
               </button>
               <button
-                className={`historical-dates__nav-btn historical-dates__nav-btn--next ${activePeriod == data.length-1 && " historical-dates__nav-btn--disable"}`}
+                className={`historical-dates__nav-btn historical-dates__nav-btn--next${activePeriod === data.length - 1 ? ' historical-dates__nav-btn--disable' : ''}`}
                 onClick={handleNextClick}
                 aria-label="Следующий период"
               >
@@ -218,7 +191,7 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
               </button>
             </div>
           </div>
-        }
+        )}
       </div>
 
       <Suspense fallback={
@@ -229,9 +202,7 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
         <EventSlider events={data[activePeriod].events} />
       </Suspense>
 
-
-      {
-        window.innerWidth < 768 &&
+      {window.innerWidth < 768 && (
         <div className="historical-dates__controls">
           <div className="historical-dates__pagination">
             <span className="historical-dates__current">
@@ -259,7 +230,7 @@ const HistoricalDates: React.FC<Props> = ({ data }) => {
             </button>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 };
